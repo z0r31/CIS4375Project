@@ -32,12 +32,8 @@ def user():
     user_query = "INSERT INTO Customer(CountryID, CustomerFirstName, CustomerLastName, CustomerAddress, CustomerPhoneNumber, CustomerEmail ) values ('%s', '%s', '%s', '%s', '%s', '%s')" % (country_id, new_Fname, new_Lname, address, phonenumber, email)
 
     execute_query(connection, user_query)
-    return 'Given Profile Successfully Created!!!'
+    return 'Customer Added!!'
 
-'''
-@app.route('/', methods=['GET'])
-def home():
-    return "<h1> Deciding Diner!!! </h1>"
 
 
 @app.route('/getcustomer', methods=['GET'])
@@ -47,6 +43,8 @@ def alluser():
     allusers = execute_read_query(connection, usersql) 
     return jsonify(allusers)
 
+    
+'''
 @app.route('/api/restaurant/all', methods=['GET'])
 def allrestaurant():
     request_data = request.get_json()
