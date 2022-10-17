@@ -1,9 +1,9 @@
 import flask
 from flask import jsonify
 from flask import request, make_response
-from sql import create_connection
-from sql import execute_query
-from sql import execute_read_query
+from backend.sql import create_connection
+from backend.sql import execute_query
+from backend.sql import execute_read_query
 
 # setting up an application name
 app = flask.Flask(__name__) # sets up the application
