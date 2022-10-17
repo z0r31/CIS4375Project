@@ -14,7 +14,7 @@ app.config["DEBUG"] = True # allows to show errors in browser
 def home():
     return "<h1> WELCOME! </h1>"
 
-# this endpoint adds a new object to the database table 
+# this endpoint adds a new customer to the database table 
 # using POST as the method type
 @app.route('/api/addcustomer', methods=['POST'])
 def add_customer():
