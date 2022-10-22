@@ -54,7 +54,7 @@ def get_country():
 
     return jsonify(results_json)
 
-# route to add new person to return table
+# route to add new record to return table
 @app.route('/api/return/add', methods=['POST'])
 def add_return():
     # send POST request in json format
@@ -67,11 +67,31 @@ def add_return():
     # establish connection to DB
     connection = get_connection()
 
-    # query to add new person to table
+    # query to add new record to table
     add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(new_ReturnDate, new_ReturnReason)
     execute_query(connection, add_query)
 
     return "POST successful"
 
+# route to read all data from ReturnTable table
+@app.route('/api/return', methods=['GET'])
+def get_return():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM ReturnTable'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
 
 app.run()
