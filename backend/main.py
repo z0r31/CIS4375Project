@@ -34,6 +34,22 @@ def user():
     execute_query(connection, user_query)
     return 'Given Profile Successfully Created!!!'
 
+@app.route('/employee', methods=['POST'])
+def user():
+    request_data = request.get_json()
+    country_id = request_data['CountryID']
+    Employee_firstname = request_data['EmployeeFirstName']
+    Employee_lastname = request_data['EmployeeLastName']
+    Employee_address = request_data['EmployeeAddress']
+    Employee_phone_number = request_data['EmployeePhoneNumber']
+    Employee_email = request_data['EmployeeEmail']
+    Hire_date = request_data['HireDate']
+
+    user_query = "INSERT INTO Customer(CountryID, EmployeeFirstName, EmployeeLastName, EmployeeAddress, EmployeePhoneNumber, EmployeeEmail, HireDate ) values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (country_id, Employee_firstname, Employee_lastname, Employee_address, Employee_phone_number, Employee_email, Hire_date)
+
+    execute_query(connection, user_query)
+    return 'Given Profile Successfully Created!!!'
+
 '''
 @app.route('/', methods=['GET'])
 def home():
