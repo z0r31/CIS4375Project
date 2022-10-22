@@ -1,9 +1,10 @@
 import flask
 from flask import jsonify
 from flask import request, make_response
-from backend.sql import create_connection
-from backend.sql import execute_query
-from backend.sql import execute_read_query
+from sql import create_connection
+from sql import execute_query
+from sql import execute_read_query
+from sql import get_connection
 
 # setting up an application name
 app = flask.Flask(__name__) # sets up the application
@@ -32,5 +33,25 @@ def add_customer():
     execute_query(conn, sql)
     return 'POST REQUEST WORKED'
 
+# route to read all data from country table
+@app.route('/api/country', methods=['GET'])
+def get_country():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM Country'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
 
 app.run()
