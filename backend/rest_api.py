@@ -1,10 +1,14 @@
 import flask
 from flask import jsonify
 from flask import request, make_response
+
 from sql import create_connection
 from sql import execute_query
 from sql import execute_read_query
 from sql import get_connection
+
+from datetime import date
+
 
 # setting up an application name
 app = flask.Flask(__name__) # sets up the application
@@ -61,14 +65,14 @@ def add_return():
     request_data = request.get_json()
 
     # information to get from payload
-    new_ReturnDate = request_data['ReturnDate']
+    # the date is handled automatically by the datetime function
     new_ReturnReason = request_data['ReturnReason']
 
     # establish connection to DB
     connection = get_connection()
 
     # query to add new record to table
-    add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(new_ReturnDate, new_ReturnReason)
+    add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(date.today(), new_ReturnReason)
     execute_query(connection, add_query)
 
     return "POST successful"
@@ -93,5 +97,26 @@ def get_return():
         results_json.append(row)
 
     return jsonify(results_json)
+
+# route to manually update record to return table
+@app.route('/api/return/update', methods=['PUT'])
+def update_return():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_ReturnReason = request_data['ReturnReason']
+    new_ReturnID = request_data['ReturnID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE ReturnTable SET ReturnReason = '{}' WHERE ReturnID = '{}'".format(new_ReturnReason,new_ReturnID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
+
 
 app.run()
