@@ -54,4 +54,23 @@ def get_country():
 
     return jsonify(results_json)
 
+# route to add new person to return table
+@app.route('/api/return/add', methods=['POST'])
+def add_return():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_ReturnDate = request_data['ReturnDate']
+    new_ReturnReason = request_data['ReturnReason']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new person to table
+    add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(new_ReturnDate, new_ReturnReason)
+    execute_query(connection, add_query)
+
+    return "POST successful"
+
 app.run()
