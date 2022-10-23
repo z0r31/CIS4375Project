@@ -21,7 +21,7 @@ def home():
 
 # this endpoint adds a new customer to the database table 
 # using POST as the method type
-@app.route('/api/addcustomer', methods=['POST'])
+@app.route('/api/customer/add', methods=['POST'])
 def add_customer():
     # using the get_json function to request data
     request_data = request.get_json()
@@ -36,6 +36,8 @@ def add_customer():
     sql = "INSERT INTO Customer(CountryID, CustomerFirstName, CustomerLastName, CustomerAddress, CustomerPhoneNumber, CustomerEmail) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')" % (CountryID, CustomerFirstName, CustomerLastName, CustomerAddress, CustomerPhoneNumber, CustomerEmail)
     execute_query(conn, sql)
     return 'POST REQUEST WORKED'
+
+
 
 # route to read all data from country table
 @app.route('/api/country', methods=['GET'])
@@ -57,6 +59,8 @@ def get_country():
         results_json.append(row)
 
     return jsonify(results_json)
+
+
 
 # route to add new record to return table
 @app.route('/api/return/add', methods=['POST'])
@@ -117,6 +121,8 @@ def update_return():
 
     return "Update successful"
 
+
+
 # route to read all data from Employee table
 @app.route('/api/employee', methods=['GET'])
 def get_employee():
@@ -137,5 +143,57 @@ def get_employee():
         results_json.append(row)
 
     return jsonify(results_json)
+
+# route to add new record to EMPLOYEE table
+@app.route('/api/employee/add', methods=['POST'])
+def add_employee():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CountryID =             request_data['CountryID']
+    new_EmployeeAddress =       request_data['EmployeeAddress']
+    new_EmployeeEmail =         request_data['EmployeeEmail']
+    new_EmployeeFirstName =     request_data['EmployeeFirstName']
+    new_EmployeeLastName =      request_data['EmployeeLastName']
+    new_EmployeePhoneNumber =   request_data['EmployeePhoneNumber']
+    new_HireDate =              request_data['HireDate']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO Employee (CountryID, EmployeeAddress, EmployeeEmail, EmployeeFirstName, EmployeeLastName, EmployeePhoneNumber, HireDate)" \
+    "VALUES ('{}','{}','{}','{}','{}','{}','{}')".format(new_CountryID, new_EmployeeAddress, new_EmployeeEmail, new_EmployeeFirstName, new_EmployeeLastName, new_EmployeePhoneNumber, new_HireDate)
+    execute_query(connection, add_query)
+
+    return "Employee added to database"
+
+# route to manually update record to employee table
+@app.route('/api/employee/update', methods=['PUT'])
+def update_employee():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CountryID =             request_data['CountryID']
+    new_EmployeeAddress =       request_data['EmployeeAddress']
+    new_EmployeeEmail =         request_data['EmployeeEmail']
+    new_EmployeeFirstName =     request_data['EmployeeFirstName']
+    new_EmployeeLastName =      request_data['EmployeeLastName']
+    new_EmployeePhoneNumber =   request_data['EmployeePhoneNumber']
+    new_HireDate =              request_data['HireDate']
+    new_EmployeeID =            request_data['EmployeeID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE Employee SET CountryID = '{}', EmployeeAddress = '{}', EmployeeEmail = '{}', " \
+        "EmployeeFirstName = '{}', EmployeeLastName = '{}', EmployeePhoneNumber = '{}', HireDate = '{}' " \
+        "WHERE EmployeeID = '{}'".format(new_CountryID, new_EmployeeAddress, new_EmployeeEmail, new_EmployeeFirstName, new_EmployeeLastName, new_EmployeePhoneNumber, new_HireDate, new_EmployeeID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
 
 app.run()
