@@ -19,23 +19,46 @@ app.config["DEBUG"] = True # allows to show errors in browser
 def home():
     return "<h1> WELCOME! </h1>"
 
+
+
+# route to read all data from Customer table
+@app.route('/api/customer', methods=['GET'])
+def get_customer():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM Customer'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
 # this endpoint adds a new customer to the database table 
 # using POST as the method type
 @app.route('/api/customer/add', methods=['POST'])
 def add_customer():
     # using the get_json function to request data
     request_data = request.get_json()
-    CountryID = request_data['CountryID']
-    CustomerFirstName = request_data['CustomerFirstName']
-    CustomerLastName = request_data['CustomerLastName']
-    CustomerAddress = request_data['CustomerAddress']
-    CustomerPhoneNumber = request_data['CustomerPhoneNumber']
-    CustomerEmail = request_data['CustomerEmail']
+    CountryID =             request_data['CountryID']
+    CustomerFirstName =     request_data['CustomerFirstName']
+    CustomerLastName =      request_data['CustomerLastName']
+    CustomerAddress =       request_data['CustomerAddress']
+    CustomerPhoneNumber =   request_data['CustomerPhoneNumber']
+    CustomerEmail =         request_data['CustomerEmail']
     conn = create_connection("database-2.cg9pywfjykka.us-east-2.rds.amazonaws.com", "admin", "FutureTechnologySolutionsGroup9", "KPJDB")
     # this sql query was created to add the new customer
     sql = "INSERT INTO Customer(CountryID, CustomerFirstName, CustomerLastName, CustomerAddress, CustomerPhoneNumber, CustomerEmail) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')" % (CountryID, CustomerFirstName, CustomerLastName, CustomerAddress, CustomerPhoneNumber, CustomerEmail)
     execute_query(conn, sql)
-    return 'POST REQUEST WORKED'
+    return 'POST successful'
 
 
 
@@ -109,8 +132,8 @@ def update_return():
     request_data = request.get_json()
 
     # information to get from payload
-    new_ReturnReason = request_data['ReturnReason']
-    new_ReturnID = request_data['ReturnID']
+    new_ReturnReason =  request_data['ReturnReason']
+    new_ReturnID =      request_data['ReturnID']
 
     # establish connection to DB
     connection = get_connection()
@@ -192,6 +215,92 @@ def update_employee():
     update_query = "UPDATE Employee SET CountryID = '{}', EmployeeAddress = '{}', EmployeeEmail = '{}', " \
         "EmployeeFirstName = '{}', EmployeeLastName = '{}', EmployeePhoneNumber = '{}', HireDate = '{}' " \
         "WHERE EmployeeID = '{}'".format(new_CountryID, new_EmployeeAddress, new_EmployeeEmail, new_EmployeeFirstName, new_EmployeeLastName, new_EmployeePhoneNumber, new_HireDate, new_EmployeeID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
+
+
+# route to read all data from Invoice table
+@app.route('/api/invoice', methods=['GET'])
+def get_invoice():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM Invoice'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
+# route to add new record to Invoice table
+@app.route('/api/invoice/add', methods=['POST'])
+def add_invoice():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CustomerID =            request_data['CustomerID']
+    new_EmployeeID =            request_data['EmployeeID']
+    new_ShipToAddress =         request_data['ShipToAddress']
+    new_DateToShip =            request_data['DateToShip']
+    new_StoreName =             request_data['StoreName']
+    new_PaymentType =           request_data['PaymentType']
+    new_InvoiceDate =           request_data['InvoiceDate']
+    new_InvoiceAmount =         request_data['InvoiceAmount']
+    new_Tax =                   request_data['Tax']
+    new_ShippingTotal =         request_data['ShippingTotal']
+    new_TrackingID =            request_data['TrackingID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO Invoice (CustomerID, EmployeeID, ShipToAddress, DateToShip, StoreName, PaymentType, InvoiceDate, InvoiceAmount, Tax, ShippingTotal, TrackingID)" \
+    "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(new_CustomerID, new_EmployeeID, new_ShipToAddress, new_DateToShip, new_StoreName, new_PaymentType, \
+        new_InvoiceDate, new_InvoiceAmount, new_Tax, new_ShippingTotal, new_TrackingID)
+    execute_query(connection, add_query)
+
+    return "Invoice added to database"
+
+# route to manually update record to Invoice table
+@app.route('/api/invoice/update', methods=['PUT'])
+def update_invoice():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CustomerID =            request_data['CustomerID']
+    new_EmployeeID =            request_data['EmployeeID']
+    new_ShipToAddress =         request_data['ShipToAddress']
+    new_DateToShip =            request_data['DateToShip']
+    new_StoreName =             request_data['StoreName']
+    new_PaymentType =           request_data['PaymentType']
+    new_InvoiceDate =           request_data['InvoiceDate']
+    new_InvoiceAmount =         request_data['InvoiceAmount']
+    new_Tax =                   request_data['Tax']
+    new_ShippingTotal =         request_data['ShippingTotal']
+    new_TrackingID =            request_data['TrackingID']
+    new_InvoiceID =             request_data['InvoiceID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE Invoice SET CustomerID = '{}', EmployeeID = '{}', ShipToAddress = '{}', " \
+        "DateToShip = '{}', StoreName = '{}', PaymentType = '{}', InvoiceDate = '{}', " \
+        "InvoiceAmount = '{}',  Tax ='{}', ShippingTotal = '{}', TrackingID = '{}' " \
+        "WHERE InvoiceID = '{}'".format(new_CustomerID, new_EmployeeID, new_ShipToAddress, new_DateToShip, new_StoreName, new_PaymentType, new_InvoiceDate, \
+        new_InvoiceAmount, new_Tax, new_ShippingTotal, new_TrackingID, new_InvoiceID)
     execute_query(connection, update_query)
 
     return "Update successful"
