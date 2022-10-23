@@ -117,6 +117,25 @@ def update_return():
 
     return "Update successful"
 
+# route to read all data from Employee table
+@app.route('/api/employee', methods=['GET'])
+def get_employee():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
 
+    select_query = 'SELECT * FROM Employee'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
 
 app.run()
