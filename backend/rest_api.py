@@ -305,4 +305,137 @@ def update_invoice():
 
     return "Update successful"
 
+
+
+# route to read all data from CustomerOrder table
+@app.route('/api/customerorder', methods=['GET'])
+def get_customerOrder():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM CustomerOrder'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
+# route to add new record to CustomerOrder table
+@app.route('/api/customerorder/add', methods=['POST'])
+def add_customerOrder():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CustomerID =                request_data['CustomerID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO CustomerOrder (CustomerID, OrderDate)" \
+    "VALUES ('{}','{}')".format(new_CustomerID, date.today())
+    execute_query(connection, add_query)
+
+    return "Order added to database"
+
+# route to manually update record to CustomerOrder table
+@app.route('/api/customerorder/update', methods=['PUT'])
+def update_customerOrder():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CustomerID =           request_data['CustomerID']
+    new_CustomerOrderID =      request_data['CustomerOrderID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE CustomerOrder SET CustomerID = '{}' " \
+        "WHERE CustomerOrderID = '{}'".format(new_CustomerID, new_CustomerOrderID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
+
+
+# route to read all data from OrderInvoice table
+@app.route('/api/orderinvoice', methods=['GET'])
+def get_orderInvoice():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM OrderInvoice'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
+# route to add new record to OrderInvoice table
+@app.route('/api/orderinvoice/add', methods=['POST'])
+def add_orderInvoice():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_InvoiceID =                request_data['InvoiceID']
+    new_CustomerOrderID =          request_data['CustomerOrderID']
+    new_ProductInventoryID =       request_data['ProductInventoryID']
+    new_OrderPrice =               request_data['OrderPrice']
+    new_OrderNotes =               request_data['OrderNotes']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO OrderInvoice (InvoiceID, CustomerOrderID, ProductInventoryID, OrderPrice, OrderNotes)" \
+    "VALUES ('{}','{}','{}','{}','{}')".format(new_InvoiceID, new_CustomerOrderID, new_ProductInventoryID, new_OrderPrice, new_OrderNotes)
+    execute_query(connection, add_query)
+
+    return "Order line added to database"
+
+# route to manually update record to OrderInvoice table
+@app.route('/api/orderinvoice/update', methods=['PUT'])
+def update_orderInvoice():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_OrderInvoiceID =           request_data['OrderInvoiceID']
+    new_InvoiceID =                request_data['InvoiceID']
+    new_CustomerOrderID =          request_data['CustomerOrderID']
+    new_ProductInventoryID =       request_data['ProductInventoryID']
+    new_OrderPrice =               request_data['OrderPrice']
+    new_OrderNotes =               request_data['OrderNotes']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE OrderInvoice SET InvoiceID = '{}', CustomerOrderID = '{}', " \
+        "ProductInventoryID = '{}', OrderPrice = '{}', OrderNotes = '{}' " \
+        "WHERE OrderInvoiceID = '{}'".format(new_InvoiceID, new_CustomerOrderID, new_ProductInventoryID, new_OrderPrice, new_OrderNotes, new_OrderInvoiceID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
 app.run()
