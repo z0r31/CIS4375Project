@@ -61,6 +61,32 @@ def add_customer():
     return 'POST successful'
 
 
+# route to manually update record to customer table
+@app.route('/api/customer/update', methods=['PUT'])
+def update_customer():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_CountryID =             request_data['CountryID']
+    new_CustomerFirstName =     request_data['CustomerFirstName']
+    new_CustomerLastName =      request_data['CustomerLastName']
+    new_CustomerAddress =       request_data['CustomerAddress']
+    new_CustomerPhoneNumber =   request_data['CustomerPhoneNumber']
+    new_CustomerEmail =         request_data['CustomerEmail']
+    new_CustomerID =            request_data['CustomerID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE Customer SET CountryID = '{}', CustomerFirstName = '{}', CustomerLastName = '{}' " \
+        "CustomerAddress = '{}', CustomerPhoneNumber = '{}', CustomerEmail = '{}' " \
+        "WHERE CustomerID = '{}'".format(new_CountryID, new_CustomerFirstName, new_CustomerLastName, new_CustomerAddress, new_CustomerPhoneNumber, new_CustomerEmail, new_CustomerID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
 
 # route to read all data from country table
 @app.route('/api/country', methods=['GET'])
