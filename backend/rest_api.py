@@ -487,4 +487,30 @@ def get_productInventory():
 
     return jsonify(results_json)
 
+# route to add new record to ProductInventory table
+@app.route('/api/productinventory/add', methods=['POST'])
+def add_productInventory():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    #new_ProductInventoryID =    request_data['ProductInventoryID']
+    new_ProductCategoryID =     request_data['ProductCategoryID']
+    new_MaterialID =            request_data['MaterialID']
+    new_ProductName =           request_data['ProductName']
+    new_ProductDescription =    request_data['ProductDescription']
+    new_Quantity =              request_data['Quantity']
+    new_UnitPrice =             request_data['UnitPrice']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO ProductInventory (ProductCategoryID, MaterialID, ProductName, ProductDescription, " \
+        "Quantity, UnitPrice) " \
+    "VALUES ('{}','{}','{}','{}','{}','{}')".format(new_ProductCategoryID, new_MaterialID, new_ProductName, new_ProductDescription, new_Quantity, new_UnitPrice)
+    execute_query(connection, add_query)
+
+    return "Product added to database"
+
 app.run()
