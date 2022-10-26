@@ -1,18 +1,30 @@
+
+#import flask library from Python 
+from http.client import OK
+import logging
 import flask
+#Import jsonify to make crud operation in JSON format
 from flask import jsonify
+from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS, cross_origin
 from flask import request, make_response
 
+#Import mysql from python to connect vscode to mysql server
+from mysql.connector import connect
+#Import three sql pre-made functions from sql.py file to establish connection, and execute queries.
 from sql import create_connection
 from sql import execute_query
 from sql import execute_read_query
 from sql import get_connection
+import random
 
-from datetime import date
+#setting up an application name
+app = flask.Flask(__name__) #sets up the application
+app.config["DEBUG"] = True #allow to show errors in browser
+cors = CORS(app, resources={r"*": {"origins": "*"}})
+api = Api(app)
 
 
-# setting up an application name
-app = flask.Flask(__name__) # sets up the application
-app.config["DEBUG"] = True # allows to show errors in browser
 
 # default url without any routing as GET request
 @app.route('/', methods=['GET']) 
@@ -86,6 +98,88 @@ def update_customer():
     execute_query(connection, update_query)
 
     return "Update successful"
+
+@app.route('/api/getcustomer', methods=['GET'])
+def allcustomer():
+    usersql = "SELECT * FROM Customer"
+    allcustomers = execute_read_query(connection, usersql) 
+    return jsonify(allcustomers)
+
+@app.route('/token', methods=['POST'])
+@cross_origin(origin='*')
+def getToken():
+     return jsonify({'data': '5befc834-62f4-4281-a71b-35c9067d8686','status':200})
+
+@app.route('/auth', methods=['POST'])
+@cross_origin(origin='*')
+def auth():
+    request_data = request.get_json()
+    email = request_data['username']
+    password = request_data['password']
+    usersql = "SELECT *,'5befc834-62f4-4281-a71b-35c9067d8686' as TOKEN FROM Customer where CustomerEmail='%s' and password='%s'" % (email,password)
+    allcustomers = execute_read_query(connection, usersql) 
+    return jsonify({'result': allcustomers,'status':200})
+
+
+# Category Section
+@app.route('/createCategory', methods=['POST'])
+@cross_origin(origin='*')
+def createCategory():
+    request_data = request.get_json()
+    categoryName = request_data['category']
+    usersql = "INSERT INTO ProductCategory(ProductDescription) values ('%s')" % (categoryName)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+@app.route('/updateCategory', methods=['POST'])
+@cross_origin(origin='*')
+def updateCategory():
+    request_data = request.get_json()
+    categoryName = request_data['category']
+    id = request_data['id_category']
+    usersql = "UPDATE ProductCategory SET ProductDescription = '%s' WHERE ProductCategoryID = '%s'" % (categoryName,id)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+@app.route('/deleteCategory', methods=['DELETE'])
+@cross_origin(origin='*')
+def deleteCategory():
+    request_data = request.get_json()
+    id = request_data['id_category']
+    usersql = "Delete From ProductCategory  WHERE ProductCategoryID = '%s'" % (id)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+
+@app.route('/categorys', methods=['GET'])
+@cross_origin(origin='*')
+def categorys():
+    usersql = "SELECT * FROM ProductCategory"
+    allCategories = execute_read_query(connection, usersql) 
+    return jsonify({'results': allCategories,'status':200})
+
+# End Category Section
+
+#Materials
+@app.route('/materials', methods=['GET'])
+@cross_origin(origin='*')
+def materials():
+    usersql = "SELECT * FROM Material"
+    materials = execute_read_query(connection, usersql) 
+    return jsonify({'results': materials,'status':200})
+
+
+#materials END
+
+# Products CRUD
+@app.route('/upload', methods = ['GET', 'POST'])
+@cross_origin(origin='*')
+def upload_file():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(f.filename)
+      return jsonify({'status':200})
+# END Products CRUD
 
 
 # route to read all data from country table
