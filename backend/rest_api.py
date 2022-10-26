@@ -15,7 +15,6 @@ from mysql.connector import connect
 from sql import create_connection
 from sql import execute_query
 from sql import execute_read_query
-from sql import get_connection
 import random
 
 #setting up an application name
@@ -23,6 +22,9 @@ app = flask.Flask(__name__) #sets up the application
 app.config["DEBUG"] = True #allow to show errors in browser
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 api = Api(app)
+
+#creating connection to Database stored in AWS using AWS credentials.
+connection = create_connection("database-2.cg9pywfjykka.us-east-2.rds.amazonaws.com", "admin", "FutureTechnologySolutionsGroup9", "KPJDB")
 
 
 
