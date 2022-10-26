@@ -464,4 +464,27 @@ def update_orderInvoice():
 
     return "Update successful"
 
+
+
+# route to read all data from ProductInventory table
+@app.route('/api/productinventory', methods=['GET'])
+def get_productInventory():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT ProductInventoryID, ProductCategoryID, MaterialID, ProductName, ProductDescription, Quantity, UnitPrice FROM ProductInventory'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
 app.run()
