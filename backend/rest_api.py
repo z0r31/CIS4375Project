@@ -39,7 +39,7 @@ def home():
 @app.route('/api/customer', methods=['GET'])
 def get_customer():
     # create connection to DB and execute read query
-    connection = get_connection()
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -91,7 +91,7 @@ def update_customer():
     new_CustomerID =            request_data['CustomerID']
 
     # establish connection to DB
-    connection = get_connection()
+    
 
     # query to add new record to table
     update_query = "UPDATE Customer SET CountryID = '{}', CustomerFirstName = '{}', CustomerLastName = '{}' " \
@@ -187,8 +187,7 @@ def upload_file():
 # route to read all data from country table
 @app.route('/api/country', methods=['GET'])
 def get_country():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -218,7 +217,7 @@ def add_return():
     new_ReturnReason = request_data['ReturnReason']
 
     # establish connection to DB
-    connection = get_connection()
+    
 
     # query to add new record to table
     add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(date.today(), new_ReturnReason)
@@ -230,7 +229,7 @@ def add_return():
 @app.route('/api/return', methods=['GET'])
 def get_return():
     # create connection to DB and execute read query
-    connection = get_connection()
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -257,8 +256,7 @@ def update_return():
     new_ReturnReason =  request_data['ReturnReason']
     new_ReturnID =      request_data['ReturnID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     update_query = "UPDATE ReturnTable SET ReturnReason = '{}' WHERE ReturnID = '{}'".format(new_ReturnReason,new_ReturnID)
@@ -271,8 +269,8 @@ def update_return():
 # route to read all data from Employee table
 @app.route('/api/employee', methods=['GET'])
 def get_employee():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -304,8 +302,7 @@ def add_employee():
     new_EmployeePhoneNumber =   request_data['EmployeePhoneNumber']
     new_HireDate =              request_data['HireDate']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     add_query = "INSERT INTO Employee (CountryID, EmployeeAddress, EmployeeEmail, EmployeeFirstName, EmployeeLastName, EmployeePhoneNumber, HireDate)" \
@@ -330,8 +327,7 @@ def update_employee():
     new_HireDate =              request_data['HireDate']
     new_EmployeeID =            request_data['EmployeeID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     update_query = "UPDATE Employee SET CountryID = '{}', EmployeeAddress = '{}', EmployeeEmail = '{}', " \
@@ -346,8 +342,7 @@ def update_employee():
 # route to read all data from Invoice table
 @app.route('/api/invoice', methods=['GET'])
 def get_invoice():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -383,8 +378,7 @@ def add_invoice():
     new_ShippingTotal =         request_data['ShippingTotal']
     new_TrackingID =            request_data['TrackingID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     add_query = "INSERT INTO Invoice (CustomerID, EmployeeID, ShipToAddress, DateToShip, StoreName, PaymentType, InvoiceDate, InvoiceAmount, Tax, ShippingTotal, TrackingID)" \
@@ -414,8 +408,6 @@ def update_invoice():
     new_TrackingID =            request_data['TrackingID']
     new_InvoiceID =             request_data['InvoiceID']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE Invoice SET CustomerID = '{}', EmployeeID = '{}', ShipToAddress = '{}', " \
@@ -432,8 +424,7 @@ def update_invoice():
 # route to read all data from CustomerOrder table
 @app.route('/api/customerorder', methods=['GET'])
 def get_customerOrder():
-    # create connection to DB and execute read query
-    connection = get_connection()
+   
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -459,8 +450,7 @@ def add_customerOrder():
     # information to get from payload
     new_CustomerID =                request_data['CustomerID']
 
-    # establish connection to DB
-    connection = get_connection()
+  
 
     # query to add new record to table
     add_query = "INSERT INTO CustomerOrder (CustomerID, OrderDate)" \
@@ -479,8 +469,6 @@ def update_customerOrder():
     new_CustomerID =           request_data['CustomerID']
     new_CustomerOrderID =      request_data['CustomerOrderID']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE CustomerOrder SET CustomerID = '{}' " \
@@ -494,8 +482,7 @@ def update_customerOrder():
 # route to read all data from OrderInvoice table
 @app.route('/api/orderinvoice', methods=['GET'])
 def get_orderInvoice():
-    # create connection to DB and execute read query
-    connection = get_connection()
+   
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -525,8 +512,6 @@ def add_orderInvoice():
     new_OrderPrice =               request_data['OrderPrice']
     new_OrderNotes =               request_data['OrderNotes']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     add_query = "INSERT INTO OrderInvoice (InvoiceID, CustomerOrderID, ProductInventoryID, OrderPrice, OrderNotes)" \
@@ -549,8 +534,7 @@ def update_orderInvoice():
     new_OrderPrice =               request_data['OrderPrice']
     new_OrderNotes =               request_data['OrderNotes']
 
-    # establish connection to DB
-    connection = get_connection()
+  
 
     # query to add new record to table
     update_query = "UPDATE OrderInvoice SET InvoiceID = '{}', CustomerOrderID = '{}', " \
