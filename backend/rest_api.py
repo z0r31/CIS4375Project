@@ -513,4 +513,30 @@ def add_productInventory():
 
     return "Product added to database"
 
+# route to manually update record to ProductInventory table
+@app.route('/api/productinventory/update', methods=['PUT'])
+def update_productInventory():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_ProductInventoryID =    request_data['ProductInventoryID']
+    new_ProductCategoryID =     request_data['ProductCategoryID']
+    new_MaterialID =            request_data['MaterialID']
+    new_ProductName =           request_data['ProductName']
+    new_ProductDescription =    request_data['ProductDescription']
+    new_Quantity =              request_data['Quantity']
+    new_UnitPrice =             request_data['UnitPrice']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE ProductInventory SET ProductCategoryID = '{}', " \
+        "MaterialID = '{}', ProductName = '{}', ProductDescription = '{}',  Quantity = '{}', UnitPrice = '{}' " \
+        "WHERE ProductInventoryID = '{}'".format(new_ProductCategoryID, new_MaterialID, new_ProductName, new_ProductDescription, new_Quantity, new_UnitPrice, new_ProductInventoryID)
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
 app.run()
