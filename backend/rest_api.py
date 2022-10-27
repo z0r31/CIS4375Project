@@ -672,4 +672,47 @@ def update_importing():
 
     return "Update successful"
 
+
+
+# route to read all data from OrderInvoice_Return table
+@app.route('/api/orderinvoicereturn', methods=['GET'])
+def get_orderInvoiceReturn():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM OrderInvoice_Return'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
+# route to add new record to OrderInvoice_Return table
+@app.route('/api/orderinvoicereturn/add', methods=['POST'])
+def add_orderInvoiceReturn():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_ReturnID =          request_data['ReturnID']
+    new_OrderInvoiceID =    request_data['OrderInvoiceID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    add_query = "INSERT INTO OrderInvoice_Return (ReturnID, OrderInvoiceID) VALUES ('{}','{}')".format(new_ReturnID, new_OrderInvoiceID)
+    
+    execute_query(connection, add_query)
+
+    return "Return added to database"
+
 app.run()
