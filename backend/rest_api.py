@@ -569,7 +569,6 @@ def add_importing():
     request_data = request.get_json()
 
     # information to get from payload
-
     # checking for ProductInventoryID in the request
     if 'ProductInventoryID' in request_data:
         new_ProductInventoryID =    request_data['ProductInventoryID']
@@ -590,7 +589,7 @@ def add_importing():
     connection = get_connection()
 
 
-    # query to add new record to table without ProductInventoryID or OrderInvoice_ReturnID
+    # query to add new record to table without ProductInventoryID and OrderInvoice_ReturnID
     if 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' not in request_data:
         add_query = "INSERT INTO Importing (ProductCategoryID, MaterialID, " \
             "Weight, ProductName, Description, ReworkStatus, Notes) " \
@@ -617,5 +616,60 @@ def add_importing():
     execute_query(connection, add_query)
 
     return "Product added to database"
+
+# route to manually update record to Importing table
+@app.route('/api/importing/update', methods=['PUT'])
+def update_importing():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    # checking for ProductInventoryID in the request
+    if 'ProductInventoryID' in request_data:
+        new_ProductInventoryID =    request_data['ProductInventoryID']
+
+    # checking for OrderInvoice_ReturnID in the request
+    if 'OrderInvoice_ReturnID' in request_data:
+        new_OrderInvoice_ReturnID = request_data['OrderInvoice_ReturnID']
+
+    new_ProductCategoryID =         request_data['ProductCategoryID']
+    new_MaterialID =                request_data['MaterialID']
+    new_Weight =                    request_data['Weight']
+    new_ProductName =               request_data['ProductName']
+    new_Description =               request_data['Description']
+    new_ReworkStatus =              request_data['ReworkStatus']
+    new_Notes =                     request_data['Notes']
+    new_ImportID =                  request_data['ImportID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table without ProductInventoryID and OrderInvoice_ReturnID
+    if 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' not in request_data:
+        update_query = "UPDATE Importing SET ProductCategoryID = '{}', MaterialID = '{}',  Weight = '{}', ProductName = '{}', " \
+            "Description = '{}', ReworkStatus = '{}', Notes = '{}' " \
+            "WHERE ImportID = '{}'".format(new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes, new_ImportID)
+
+    # query to add new record to table without OrderInvoice_ReturnID
+    elif 'ProductInventoryID' in request_data and 'OrderInvoice_ReturnID' not in request_data:
+        update_query = "UPDATE Importing SET ProductInventoryID = '{}', ProductCategoryID = '{}', MaterialID = '{}',  Weight = '{}', ProductName = '{}', " \
+            "Description = '{}', ReworkStatus = '{}', Notes = '{}' " \
+            "WHERE ImportID = '{}'".format(new_ProductInventoryID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes, new_ImportID)
+
+    # query to add new record to table without ProductInventoryID
+    elif 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' in request_data:
+        update_query = "UPDATE Importing SET OrderInvoice_ReturnID = '{}', ProductCategoryID = '{}', MaterialID = '{}',  Weight = '{}', ProductName = '{}', " \
+            "Description = '{}', ReworkStatus = '{}', Notes = '{}' " \
+            "WHERE ImportID = '{}'".format(new_OrderInvoice_ReturnID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes, new_ImportID)
+    
+    # query to add new record to table
+    else:
+        update_query = "UPDATE Importing SET ProductInventoryID = '{}', OrderInvoice_ReturnID = '{}', ProductCategoryID = '{}', MaterialID = '{}',  Weight = '{}', ProductName = '{}', " \
+                "Description = '{}', ReworkStatus = '{}', Notes = '{}' " \
+                "WHERE ImportID = '{}'".format(new_ProductInventoryID, new_OrderInvoice_ReturnID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes, new_ImportID)    
+   
+    execute_query(connection, update_query)
+
+    return "Update successful"
 
 app.run()
