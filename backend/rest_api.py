@@ -715,4 +715,25 @@ def add_orderInvoiceReturn():
 
     return "Return added to database"
 
+# route to manually update record to OrderInvoice_Return table
+@app.route('/api/orderinvoicereturn/update', methods=['PUT'])
+def update_orderInvoiceReturn():
+    # send PUT request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+    new_ReturnID =              request_data['ReturnID']
+    new_OrderInvoiceID =        request_data['OrderInvoiceID']
+    new_OrderInvoice_ReturnID = request_data['OrderInvoice_ReturnID']
+
+    # establish connection to DB
+    connection = get_connection()
+
+    # query to add new record to table
+    update_query = "UPDATE OrderInvoice_Return SET ReturnID = '{}', OrderInvoiceID = '{}' WHERE OrderInvoice_ReturnID = '{}'".format(new_ReturnID, new_OrderInvoiceID, new_OrderInvoice_ReturnID)
+    
+    execute_query(connection, update_query)
+
+    return "Update successful"
+
 app.run()
