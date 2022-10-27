@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import flask
 from flask import jsonify
 from flask import request, make_response
@@ -494,7 +495,6 @@ def add_productInventory():
     request_data = request.get_json()
 
     # information to get from payload
-    #new_ProductInventoryID =    request_data['ProductInventoryID']
     new_ProductCategoryID =     request_data['ProductCategoryID']
     new_MaterialID =            request_data['MaterialID']
     new_ProductName =           request_data['ProductName']
@@ -561,5 +561,61 @@ def get_importing():
         results_json.append(row)
 
     return jsonify(results_json)
+
+# route to add new record to Importing table
+@app.route('/api/importing/add', methods=['POST'])
+def add_importing():
+    # send POST request in json format
+    request_data = request.get_json()
+
+    # information to get from payload
+
+    # checking for ProductInventoryID in the request
+    if 'ProductInventoryID' in request_data:
+        new_ProductInventoryID =    request_data['ProductInventoryID']
+
+    # checking for OrderInvoice_ReturnID in the request
+    if 'OrderInvoice_ReturnID' in request_data:
+        new_OrderInvoice_ReturnID = request_data['OrderInvoice_ReturnID']
+
+    new_ProductCategoryID =         request_data['ProductCategoryID']
+    new_MaterialID =                request_data['MaterialID']
+    new_Weight =                    request_data['Weight']
+    new_ProductName =               request_data['ProductName']
+    new_Description =               request_data['Description']
+    new_ReworkStatus =              request_data['ReworkStatus']
+    new_Notes =                     request_data['Notes']
+
+    # establish connection to DB
+    connection = get_connection()
+
+
+    # query to add new record to table without ProductInventoryID or OrderInvoice_ReturnID
+    if 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' not in request_data:
+        add_query = "INSERT INTO Importing (ProductCategoryID, MaterialID, " \
+            "Weight, ProductName, Description, ReworkStatus, Notes) " \
+            "VALUES ('{}','{}','{}','{}','{}','{}','{}')".format(new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes)
+
+    # query to add new record to table without OrderInvoice_ReturnID
+    elif 'ProductInventoryID' in request_data and 'OrderInvoice_ReturnID' not in request_data:
+        add_query = "INSERT INTO Importing (ProductInventoryID, ProductCategoryID, MaterialID, " \
+            "Weight, ProductName, Description, ReworkStatus, Notes) " \
+            "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')".format(new_ProductInventoryID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes)
+    
+    # query to add new record to table without ProductInventoryID
+    elif 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' in request_data:
+        add_query = "INSERT INTO Importing (OrderInvoice_ReturnID, ProductCategoryID, MaterialID, " \
+            "Weight, ProductName, Description, ReworkStatus, Notes) " \
+            "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')".format(new_OrderInvoice_ReturnID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes)
+    
+    # query to add new record to table with all fields
+    else:
+        add_query = "INSERT INTO Importing (ProductInventoryID, OrderInvoice_ReturnID, ProductCategoryID, MaterialID, " \
+            "Weight, ProductName, Description, ReworkStatus, Notes) " \
+            "VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(new_ProductInventoryID, new_OrderInvoice_ReturnID, new_ProductCategoryID, new_MaterialID, new_Weight, new_ProductName, new_Description, new_ReworkStatus, new_Notes)
+    
+    execute_query(connection, add_query)
+
+    return "Product added to database"
 
 app.run()
