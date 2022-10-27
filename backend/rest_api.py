@@ -539,4 +539,27 @@ def update_productInventory():
 
     return "Update successful"
 
+
+
+# route to read all data from Importing table
+@app.route('/api/importing', methods=['GET'])
+def get_importing():
+    # create connection to DB and execute read query
+    connection = get_connection()
+    # read request return as a dictionary
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT * FROM Importing'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+ 
+    # append all results to result_json list
+    results_json = []
+    for row in result:
+        results_json.append(row)
+
+    return jsonify(results_json)
+
 app.run()
