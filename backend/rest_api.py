@@ -1,19 +1,33 @@
-from asyncio.windows_events import NULL
+#import flask library from Python 
+from http.client import OK
+import logging
 import flask
+#Import jsonify to make crud operation in JSON format
 from flask import jsonify
+from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS, cross_origin
 from flask import request, make_response
 
+#Import mysql from python to connect vscode to mysql server
+from mysql.connector import connect
+#Import three sql pre-made functions from sql.py file to establish connection, and execute queries.
 from sql import create_connection
 from sql import execute_query
 from sql import execute_read_query
-from sql import get_connection
+import random
 
 from datetime import date
 
+#setting up an application name
+app = flask.Flask(__name__) #sets up the application
+app.config["DEBUG"] = True #allow to show errors in browser
+cors = CORS(app, resources={r"*": {"origins": "*"}})
+api = Api(app)
 
-# setting up an application name
-app = flask.Flask(__name__) # sets up the application
-app.config["DEBUG"] = True # allows to show errors in browser
+#creating connection to Database stored in AWS using AWS credentials.
+connection = create_connection("database-2.cg9pywfjykka.us-east-2.rds.amazonaws.com", "admin", "FutureTechnologySolutionsGroup9", "KPJDB")
+
+
 
 # default url without any routing as GET request
 @app.route('/', methods=['GET']) 
@@ -26,7 +40,7 @@ def home():
 @app.route('/api/customer', methods=['GET'])
 def get_customer():
     # create connection to DB and execute read query
-    connection = get_connection()
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -78,7 +92,7 @@ def update_customer():
     new_CustomerID =            request_data['CustomerID']
 
     # establish connection to DB
-    connection = get_connection()
+    
 
     # query to add new record to table
     update_query = "UPDATE Customer SET CountryID = '{}', CustomerFirstName = '{}', CustomerLastName = '{}' " \
@@ -88,12 +102,93 @@ def update_customer():
 
     return "Update successful"
 
+@app.route('/api/getcustomer', methods=['GET'])
+def allcustomer():
+    usersql = "SELECT * FROM Customer"
+    allcustomers = execute_read_query(connection, usersql) 
+    return jsonify(allcustomers)
+
+@app.route('/token', methods=['POST'])
+@cross_origin(origin='*')
+def getToken():
+     return jsonify({'data': '5befc834-62f4-4281-a71b-35c9067d8686','status':200})
+
+@app.route('/auth', methods=['POST'])
+@cross_origin(origin='*')
+def auth():
+    request_data = request.get_json()
+    email = request_data['username']
+    password = request_data['password']
+    usersql = "SELECT *,'5befc834-62f4-4281-a71b-35c9067d8686' as TOKEN FROM Customer where CustomerEmail='%s' and password='%s'" % (email,password)
+    allcustomers = execute_read_query(connection, usersql) 
+    return jsonify({'result': allcustomers,'status':200})
+
+
+# Category Section
+@app.route('/createCategory', methods=['POST'])
+@cross_origin(origin='*')
+def createCategory():
+    request_data = request.get_json()
+    categoryName = request_data['category']
+    usersql = "INSERT INTO ProductCategory(ProductDescription) values ('%s')" % (categoryName)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+@app.route('/updateCategory', methods=['POST'])
+@cross_origin(origin='*')
+def updateCategory():
+    request_data = request.get_json()
+    categoryName = request_data['category']
+    id = request_data['id_category']
+    usersql = "UPDATE ProductCategory SET ProductDescription = '%s' WHERE ProductCategoryID = '%s'" % (categoryName,id)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+@app.route('/deleteCategory', methods=['DELETE'])
+@cross_origin(origin='*')
+def deleteCategory():
+    request_data = request.get_json()
+    id = request_data['id_category']
+    usersql = "Delete From ProductCategory  WHERE ProductCategoryID = '%s'" % (id)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
+
+
+@app.route('/categorys', methods=['GET'])
+@cross_origin(origin='*')
+def categorys():
+    usersql = "SELECT * FROM ProductCategory"
+    allCategories = execute_read_query(connection, usersql) 
+    return jsonify({'results': allCategories,'status':200})
+
+# End Category Section
+
+#Materials
+@app.route('/materials', methods=['GET'])
+@cross_origin(origin='*')
+def materials():
+    usersql = "SELECT * FROM Material"
+    materials = execute_read_query(connection, usersql) 
+    return jsonify({'results': materials,'status':200})
+
+
+#materials END
+
+# Products CRUD
+@app.route('/upload', methods = ['GET', 'POST'])
+@cross_origin(origin='*')
+def upload_file():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(f.filename)
+      return jsonify({'status':200})
+# END Products CRUD
+
 
 # route to read all data from country table
 @app.route('/api/country', methods=['GET'])
 def get_country():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -123,7 +218,7 @@ def add_return():
     new_ReturnReason = request_data['ReturnReason']
 
     # establish connection to DB
-    connection = get_connection()
+    
 
     # query to add new record to table
     add_query = "INSERT INTO ReturnTable (ReturnDate, ReturnReason) VALUES ('{}','{}')".format(date.today(), new_ReturnReason)
@@ -135,7 +230,7 @@ def add_return():
 @app.route('/api/return', methods=['GET'])
 def get_return():
     # create connection to DB and execute read query
-    connection = get_connection()
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -162,8 +257,7 @@ def update_return():
     new_ReturnReason =  request_data['ReturnReason']
     new_ReturnID =      request_data['ReturnID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     update_query = "UPDATE ReturnTable SET ReturnReason = '{}' WHERE ReturnID = '{}'".format(new_ReturnReason,new_ReturnID)
@@ -176,8 +270,8 @@ def update_return():
 # route to read all data from Employee table
 @app.route('/api/employee', methods=['GET'])
 def get_employee():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
+    
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -209,8 +303,7 @@ def add_employee():
     new_EmployeePhoneNumber =   request_data['EmployeePhoneNumber']
     new_HireDate =              request_data['HireDate']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     add_query = "INSERT INTO Employee (CountryID, EmployeeAddress, EmployeeEmail, EmployeeFirstName, EmployeeLastName, EmployeePhoneNumber, HireDate)" \
@@ -235,8 +328,7 @@ def update_employee():
     new_HireDate =              request_data['HireDate']
     new_EmployeeID =            request_data['EmployeeID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     update_query = "UPDATE Employee SET CountryID = '{}', EmployeeAddress = '{}', EmployeeEmail = '{}', " \
@@ -251,8 +343,7 @@ def update_employee():
 # route to read all data from Invoice table
 @app.route('/api/invoice', methods=['GET'])
 def get_invoice():
-    # create connection to DB and execute read query
-    connection = get_connection()
+  
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -288,8 +379,7 @@ def add_invoice():
     new_ShippingTotal =         request_data['ShippingTotal']
     new_TrackingID =            request_data['TrackingID']
 
-    # establish connection to DB
-    connection = get_connection()
+   
 
     # query to add new record to table
     add_query = "INSERT INTO Invoice (CustomerID, EmployeeID, ShipToAddress, DateToShip, StoreName, PaymentType, InvoiceDate, InvoiceAmount, Tax, ShippingTotal, TrackingID)" \
@@ -319,8 +409,6 @@ def update_invoice():
     new_TrackingID =            request_data['TrackingID']
     new_InvoiceID =             request_data['InvoiceID']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE Invoice SET CustomerID = '{}', EmployeeID = '{}', ShipToAddress = '{}', " \
@@ -337,8 +425,7 @@ def update_invoice():
 # route to read all data from CustomerOrder table
 @app.route('/api/customerorder', methods=['GET'])
 def get_customerOrder():
-    # create connection to DB and execute read query
-    connection = get_connection()
+   
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -364,8 +451,7 @@ def add_customerOrder():
     # information to get from payload
     new_CustomerID =                request_data['CustomerID']
 
-    # establish connection to DB
-    connection = get_connection()
+  
 
     # query to add new record to table
     add_query = "INSERT INTO CustomerOrder (CustomerID, OrderDate)" \
@@ -384,8 +470,6 @@ def update_customerOrder():
     new_CustomerID =           request_data['CustomerID']
     new_CustomerOrderID =      request_data['CustomerOrderID']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE CustomerOrder SET CustomerID = '{}' " \
@@ -399,8 +483,7 @@ def update_customerOrder():
 # route to read all data from OrderInvoice table
 @app.route('/api/orderinvoice', methods=['GET'])
 def get_orderInvoice():
-    # create connection to DB and execute read query
-    connection = get_connection()
+   
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -430,8 +513,6 @@ def add_orderInvoice():
     new_OrderPrice =               request_data['OrderPrice']
     new_OrderNotes =               request_data['OrderNotes']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     add_query = "INSERT INTO OrderInvoice (InvoiceID, CustomerOrderID, ProductInventoryID, OrderPrice, OrderNotes)" \
@@ -454,8 +535,7 @@ def update_orderInvoice():
     new_OrderPrice =               request_data['OrderPrice']
     new_OrderNotes =               request_data['OrderNotes']
 
-    # establish connection to DB
-    connection = get_connection()
+  
 
     # query to add new record to table
     update_query = "UPDATE OrderInvoice SET InvoiceID = '{}', CustomerOrderID = '{}', " \
@@ -470,8 +550,7 @@ def update_orderInvoice():
 # route to read all data from ProductInventory table
 @app.route('/api/productinventory', methods=['GET'])
 def get_productInventory():
-    # create connection to DB and execute read query
-    connection = get_connection()
+
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -502,8 +581,6 @@ def add_productInventory():
     new_Quantity =              request_data['Quantity']
     new_UnitPrice =             request_data['UnitPrice']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     add_query = "INSERT INTO ProductInventory (ProductCategoryID, MaterialID, ProductName, ProductDescription, " \
@@ -528,8 +605,6 @@ def update_productInventory():
     new_Quantity =              request_data['Quantity']
     new_UnitPrice =             request_data['UnitPrice']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE ProductInventory SET ProductCategoryID = '{}', " \
@@ -544,8 +619,7 @@ def update_productInventory():
 # route to read all data from Importing table
 @app.route('/api/importing', methods=['GET'])
 def get_importing():
-    # create connection to DB and execute read query
-    connection = get_connection()
+
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -584,9 +658,6 @@ def add_importing():
     new_Description =               request_data['Description']
     new_ReworkStatus =              request_data['ReworkStatus']
     new_Notes =                     request_data['Notes']
-
-    # establish connection to DB
-    connection = get_connection()
 
 
     # query to add new record to table without ProductInventoryID and OrderInvoice_ReturnID
@@ -641,9 +712,6 @@ def update_importing():
     new_Notes =                     request_data['Notes']
     new_ImportID =                  request_data['ImportID']
 
-    # establish connection to DB
-    connection = get_connection()
-
     # query to add new record to table without ProductInventoryID and OrderInvoice_ReturnID
     if 'ProductInventoryID' not in request_data and 'OrderInvoice_ReturnID' not in request_data:
         update_query = "UPDATE Importing SET ProductCategoryID = '{}', MaterialID = '{}',  Weight = '{}', ProductName = '{}', " \
@@ -677,8 +745,7 @@ def update_importing():
 # route to read all data from OrderInvoice_Return table
 @app.route('/api/orderinvoicereturn', methods=['GET'])
 def get_orderInvoiceReturn():
-    # create connection to DB and execute read query
-    connection = get_connection()
+
     # read request return as a dictionary
     cursor = connection.cursor(dictionary=True)
 
@@ -705,9 +772,6 @@ def add_orderInvoiceReturn():
     new_ReturnID =          request_data['ReturnID']
     new_OrderInvoiceID =    request_data['OrderInvoiceID']
 
-    # establish connection to DB
-    connection = get_connection()
-
     # query to add new record to table
     add_query = "INSERT INTO OrderInvoice_Return (ReturnID, OrderInvoiceID) VALUES ('{}','{}')".format(new_ReturnID, new_OrderInvoiceID)
     
@@ -726,8 +790,6 @@ def update_orderInvoiceReturn():
     new_OrderInvoiceID =        request_data['OrderInvoiceID']
     new_OrderInvoice_ReturnID = request_data['OrderInvoice_ReturnID']
 
-    # establish connection to DB
-    connection = get_connection()
 
     # query to add new record to table
     update_query = "UPDATE OrderInvoice_Return SET ReturnID = '{}', OrderInvoiceID = '{}' WHERE OrderInvoice_ReturnID = '{}'".format(new_ReturnID, new_OrderInvoiceID, new_OrderInvoice_ReturnID)
