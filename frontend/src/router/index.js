@@ -7,6 +7,7 @@ import Profile from '../views/Profile.vue'
 import UpdateProduct from '../views/UpdateProduct.vue'
 import NewProduct from '../views/NewProduct.vue'
 import Category from '../views/Category.vue'
+import Customer from '../views/Customer.vue'
 
 const routes = [
 	{
@@ -38,6 +39,11 @@ const routes = [
 	   path: '/category',
 	   name: 'category',
 	   component: Category
+	},
+	{
+	   path: '/customer',
+	   name: 'customer',
+	   component: Customer
 	}
 ]
 //createRouter

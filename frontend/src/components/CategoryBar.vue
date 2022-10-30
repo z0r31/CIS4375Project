@@ -6,9 +6,8 @@
       </div>
       <div class="mt-3 mb-5 overflow-scroll flex gap-4">
          <template v-for="(item, index) in categoryArr" :key="index">
-            {{item}}
-            <span @click="changeCategory(item.category)" :class="currentCategory === item.category ? 'active' : ''" class="label flex justify-center items-center block duration-300">
-               {{ item.category }}
+            <span @click="changeCategory(item.ProductCategoryID)" :class="currentCategory === item.ProductCategoryID ? 'active' : ''" class="label flex justify-center items-center block duration-300">
+               {{ item.ProductDescription }}
             </span>
          </template>
       </div>
@@ -34,9 +33,9 @@
       
       const getCategory = (status, res)  => {
          if ( status ) {
-            categoryArr.value = res.results
-            categoryArr.value.unshift({ category: 'All' })
-            categoryArr.value.push({ category: 'Uncategorys' })
+            categoryArr.value = res.data.results
+            categoryArr.value.unshift({ ProductDescription: 'All' })
+            categoryArr.value.push({ ProductDescription: 'Uncategorys' })
          }
       }
       

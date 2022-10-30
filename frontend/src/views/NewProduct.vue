@@ -8,7 +8,7 @@
    <FormProduct>
       <template v-slot:caption-form>
          <h1 class="show-slide text-xl w-full text-prussian-blue">
-            You can add new product here 👏
+            You can add new product here
          </h1>
       </template>
    </FormProduct>

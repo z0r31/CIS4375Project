@@ -802,4 +802,53 @@ def update_orderInvoiceReturn():
 
     return "Update successful"
 
+# Products CRUD
+
+
+@app.route('/products', methods=['GET'])
+@cross_origin(origin='*')
+def products():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT ProductInventoryID,ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice FROM ProductInventory"
+    allproducts = execute_read_query(connection, usersql)
+    return jsonify({'results': allproducts, 'status': 200})
+
+@app.route('/search/<ProductCategoryID>', methods=['GET'])
+@cross_origin(origin='*')
+def search(ProductCategoryID):
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+    usersql = "SELECT ProductInventoryID,ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice FROM ProductInventory WHERE ProductCategoryID=" + ProductCategoryID
+    allproducts = execute_read_query(connection, usersql)
+    return jsonify({'results': allproducts, 'status': 200})
+
+
+@app.route('/createProduct', methods=['POST'])
+@cross_origin(origin='*')
+def createProduct():
+    request_data = request.get_json()
+
+    # information to get from payload
+    MaterialID = request_data['MaterialID']
+    category_productId = request_data['category_productId']
+    image_product = request_data['image_product']
+    price_product = request_data['price_product']
+    product_description = request_data['product_description']
+    product_name = request_data['product_name']
+    quantity = request_data['quantity']
+
+    usersql = "INSERT INTO ProductInventory(ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice)"\
+        "VALUES ('{}','{}','{}','{}','{}','{}')".format(category_productId,
+                                                        MaterialID, product_name, product_description, quantity, price_product)
+    execute_query(connection, usersql)
+    return jsonify({'status': 200})
+
+# END Products CRUD
+
 app.run()

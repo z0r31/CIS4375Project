@@ -28,6 +28,7 @@ const actions = {
       const TOKEN = localStorage.getItem('TOKEN')
       
       const setProducts = res => {
+         console.log(res);
          //Check the response
          if ( res.data.status === 200 ) {
             commit('setProducts', res.data.results)
