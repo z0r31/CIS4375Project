@@ -16,9 +16,9 @@
       <li class="flex-1 mr-2">
          <div @click="btnManageCategory()" class="text-center block border border-blue-500 rounded py-2 px-4  hover:bg-blue-700 text-black">Manage category</div>
       </li>
-      <!-- <li class="flex-1 mr-2">
+      <li class="flex-1 mr-2">
          <div @click="btnCustomers()" class="text-center block border border-blue-500 rounded py-2 px-4  hover:bg-blue-700 text-black">Customers</div>
-      </li> -->
+      </li>
    </ul>
    <hr />
 </template>

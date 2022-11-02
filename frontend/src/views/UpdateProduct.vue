@@ -10,7 +10,7 @@
          <h1 class="show-slide  text-xl w-full text-prussian-blue">
             You can update information 
             <br />
-            about your item here 👏
+            about your item here 
          </h1>
       </template>
    </FormProduct>

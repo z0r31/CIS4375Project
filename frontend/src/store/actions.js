@@ -47,6 +47,6 @@ const actions = {
       //alert(JSON.stringify(payload))
       searchProducts(payload, getAndSet)
    }
-}
+}  
 
 export default actions

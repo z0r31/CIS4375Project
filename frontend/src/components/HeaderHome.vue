@@ -14,7 +14,7 @@
          </div>
       </div>
       <div class="show-slide mt-5 text-2xl text-prussian-blue">
-         <p>Wellcome to <strong>Stock</strong> ,</p>
+         <p>Welcome to <strong>KPJ Inventory Management App</strong> ,</p>
          <p>{{ fullname }}</p>
       </div>
    </section>

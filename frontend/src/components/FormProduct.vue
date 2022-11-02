@@ -17,7 +17,7 @@
          
          <!-- Name of product -->
          <div class="show-slide form-input mb-5">
-            <input v-model="form.product_name" type="text" placeholder="Name product" />
+            <input v-model="form.product_name" type="text" placeholder="Product Name" />
          </div>
          <div class="show-slide form-input mb-5">
             <input v-model="form.product_description" type="text" placeholder="Product Description" />
@@ -42,7 +42,8 @@
             <select v-model="form.MaterialID" class="select-form">
                <option selected="true" value="0">Choose the material</option>
                <template v-for="(item, index) in MaterialArr" :key="index">
-                  <option class="px-3" :value="item.MaterialID">{{ item.MaterialType }}</option>
+                  <option class="px-3" :value="item.MaterialID">{{ item.MaterialType }}, Karat: {{ item.Karat }} </option>
+                 
                </template>
             </select>
          </div>

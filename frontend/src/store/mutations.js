@@ -30,7 +30,18 @@ const mutations = {
 	},
 	setKeyword (state, payload) {
 	   state.keyword = payload
-	}
+	},
+	updateCustomer (state, payload) {
+		const body = state.updateCustomer
+		//Binding data
+		body.CustomerFirstName = payload.CustomerFirstName
+		body.CustomerLastName = payload.CustomerLastName
+		body.CustomerAddress = payload.CustomerAddress
+		body.CustomerPhoneNumber = payload.CustomerPhoneNumber
+		body.CustomerEmail = payload.CustomerEmail
+		body.CountryID = payload.CountryID
+		body.CustomerID = payload.CustomerID
+	  },
 }
 
 export default mutations

@@ -60,6 +60,7 @@ def get_customer():
 # this endpoint adds a new customer to the database table 
 # using POST as the method type
 @app.route('/api/customer/add', methods=['POST'])
+@cross_origin(origin='*')
 def add_customer():
 
     # using the get_json function to request data
@@ -77,11 +78,13 @@ def add_customer():
     
     execute_query(connection, sql)
 
-    return 'POST successful'
+    return jsonify({'status':200})
+
 
 
 # route to manually update record to customer table
 @app.route('/api/customer/update', methods=['PUT'])
+@cross_origin(origin='*')
 def update_customer():
     # send PUT request in json format
     request_data = request.get_json()
@@ -100,11 +103,12 @@ def update_customer():
 
     # query to add new record to table
     update_query = "UPDATE Customer SET CountryID = '{}', CustomerFirstName = '{}', CustomerLastName = '{}' " \
-        "CustomerAddress = '{}', CustomerPhoneNumber = '{}', CustomerEmail = '{}' " \
+        ", CustomerAddress = '{}', CustomerPhoneNumber = '{}', CustomerEmail = '{}' " \
         "WHERE CustomerID = '{}'".format(new_CountryID, new_CustomerFirstName, new_CustomerLastName, new_CustomerAddress, new_CustomerPhoneNumber, new_CustomerEmail, new_CustomerID)
+    print(update_query)
     execute_query(connection, update_query)
 
-    return "Update successful"
+    return jsonify({'status':200})
 
 @app.route('/api/getcustomer', methods=['GET'])
 def allcustomer():
@@ -191,6 +195,7 @@ def upload_file():
 
 # route to read all data from country table
 @app.route('/api/country', methods=['GET'])
+@cross_origin(origin='*')
 def get_country():
   
     # read request return as a dictionary
@@ -850,5 +855,14 @@ def createProduct():
     return jsonify({'status': 200})
 
 # END Products CRUD
+
+@app.route('/api/deleteCustomer', methods=['DELETE'])
+@cross_origin(origin='*')
+def deleteCustomer():
+    request_data = request.get_json()
+    id = request_data['CustomerID']
+    usersql = "Delete From Customer  WHERE CustomerID = '%s'" % (id)
+    execute_query(connection, usersql)
+    return jsonify({'status':200})
 
 app.run()

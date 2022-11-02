@@ -37,7 +37,10 @@ const getters = {
    },
    currentCategory(state) {
       return state.currentCategory
-   }
+   },
+   updateCustomer(state) {
+      return state.updateCustomer 
+    },
 }
 
 export default getters

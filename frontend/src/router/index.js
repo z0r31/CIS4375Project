@@ -8,6 +8,7 @@ import UpdateProduct from '../views/UpdateProduct.vue'
 import NewProduct from '../views/NewProduct.vue'
 import Category from '../views/Category.vue'
 import Customer from '../views/Customer.vue'
+import addEditCustomer from '../views/add-edit-customer.vue'
 
 const routes = [
 	{
@@ -44,7 +45,17 @@ const routes = [
 	   path: '/customer',
 	   name: 'customer',
 	   component: Customer
-	}
+	},
+	{
+	   path: '/add-customer',
+	   name: 'add-customer',
+	   component: addEditCustomer
+	},
+	{
+		path: '/edit-customer',
+		name: 'edit-customer',
+		component: addEditCustomer
+	 }
 ]
 //createRouter
 const router = createRouter({ history: createWebHistory(process.env.BASE_URL), routes })
