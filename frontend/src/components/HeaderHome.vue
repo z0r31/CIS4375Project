@@ -6,15 +6,15 @@
          <div class="header-home-wrapper s-container">
             <div class="flex items-center">
                <img class="rounded-xl bg-prussian-blue" src="/icons/icon-144x144.png" alt="logo-stock" width="40"/>
-               <strong class="logo-text text-prussian-blue ml-2 text-xl font-bold">STOCK</strong>
+               <strong class="logo-text text-prussian-blue ml-2 text-xl font-bold">KPJ</strong>
             </div>
             <div @click="btnUserProfile()" class="btn-active-icon duration-300 bg-prussian-blue text-gray-100 flex justify-center items-center p-3 rounded-xl">
                <i class="fa fa-user"></i>
             </div>
          </div>
       </div>
-      <div class="show-slide mt-20 text-2xl text-prussian-blue">
-         <p>Wellcome to <strong>Stock</strong> ,</p>
+      <div class="show-slide mt-5 text-2xl text-prussian-blue">
+         <p>Welcome to <strong>KPJ Inventory Management App</strong> ,</p>
          <p>{{ fullname }}</p>
       </div>
    </section>

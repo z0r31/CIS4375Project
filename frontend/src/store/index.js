@@ -27,7 +27,16 @@ const store = createStore({
 			  stock_unit: ''
 			},
 			currentCategory: 'All',
-			keyword: ''
+			keyword: '',
+			updateCustomer: {
+				CustomerFirstName: '',
+				CustomerLastName: '',
+				CustomerAddress: '',
+				CustomerPhoneNumber: '',
+				CustomerEmail: '',
+				CountryID: '',
+				CustomerID: ''
+			  },
 		}
 	},
 	getters,

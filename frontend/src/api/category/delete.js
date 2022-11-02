@@ -22,12 +22,6 @@ const deleteCategory = (category, key, callback, getCategorys) => {
          //Success
          if (res.data.status === 200) {
             callback(getCategorys)
-            //Set all products to uncategory
-            // axios.post(`${BASE_URL}/setUncategorys`, body, { headers })
-            //    .then(res => {
-            //       callback(getCategorys)
-            //    })
-            //    .catch(err => console.log(err))
          }
       })
       .catch(err => console.log(err))

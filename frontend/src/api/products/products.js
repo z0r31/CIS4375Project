@@ -9,6 +9,7 @@ const products = (token, callback) => {
          token
       }})
       .then(res => {
+         console.log(res)
          callback(res)
       })
       .catch(err => {

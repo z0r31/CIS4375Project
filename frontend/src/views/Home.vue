@@ -1,7 +1,7 @@
 <template>
-	<HeaderHome :fullname="fullname"></HeaderHome>
-	<SearchBar v-on:change-keyword="search()"></SearchBar>
 	<Menu></Menu>
+   <HeaderHome :fullname="fullname"></HeaderHome>
+	
 	<CategoryBar v-on:change-category="search()"></CategoryBar>
 	<Card :cards="products" v-on:btn-delete-product="showModalDelete = !showModalDelete" ></Card>
 	<Modal v-on:reload-product="reloadProduct()" v-on:closeModal="showModalDelete = !showModalDelete" :is-show-modal="showModalDelete" actions="deleteProduct"></Modal>
@@ -76,11 +76,13 @@
          store.dispatch('getProductsBy', bodySearch.value)
       } else {
          //Get All products from server
-         store.dispatch('getProducts')
+         setTimeout(() => {
+            store.dispatch('getProducts')
+         }, 1000);
       }
       
       //Set fullname from server
-      store.dispatch('getProfile')
+      //store.dispatch('getProfile')
       
       //The body
       const body = {

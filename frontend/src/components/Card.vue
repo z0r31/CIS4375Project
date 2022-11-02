@@ -7,7 +7,7 @@
       </div>
       
       <!-- State empty card -->
-      <div class="mt-12" v-if="cards.length <= 0">
+      <div class="mt-12" v-if="cards?.length <= 0">
          <p>Product not found, try to add new product or change the category</p>
       </div>
       
@@ -15,30 +15,30 @@
       <div class="card-wrapper">
          <template v-for="(card, index) in cards" :key="index">
             <div class="card flex flex-wrap flex-column flex-stretch show-slide">
-               <img load="lazy" class="w-full" :src="card.image_product" :alt="card.image_product" />
+               <!-- <img load="lazy" class="w-full" :src="card.image_product" :alt="card.image_product" /> -->
                <div class="pt-2 self-end pb-6 px-3 bg-white">
-                  <strong>{{ card.name_product }}</strong>
+                  <strong>{{ card.ProductName }}</strong>
                   <div class="flex mt-2">
                      <span>
                         <i class="mr-1 fas fa-dollar-sign"></i>
-                        <small>{{ card.price_product.toLocaleString() }}</small>
+                        <small>{{ card.UnitPrice.toLocaleString() }}</small>
                      </span>
                      <span>
                         <i class="mr-1 fas fa-cubes ml-3"></i>
-                        <small>{{ card.stock_product }}{{ card.stock_unit }}</small>
+                        <small>{{ card.Quantity }}</small>
                      </span>
                   </div>
                   <div class="mt-4 w-full flex justify-between">
                      <span @click="btnUpdateProduct(
-                        card.id_product,
-                        card.name_product,
-                        card.image_product,
-                        card.price_product,
+                        card.ProductInventoryID,
+                        card.ProductName,
+                        card.UnitPrice,
                         card.stock_product,
-                        card.stock_unit,
-                        card.category_product
+                        card.Quantity,
+                        card.ProductCategoryID,
+                        card.MaterialID
                      )" class="btn-active-label duration-300 block w-8/12 rounded bg-prussian-blue text-center text-sm py-1 text-gray-100">Update</span>
-                     <span @click="btnDeleteProduct(card.id_product, card.image_product)" class="btn-active-icon duration-300 block w-3/12 rounded bg-gray-500 text-gray-100 flex justify-center items-center">
+                     <span @click="btnDeleteProduct(card.ProductInventoryID, card.Image)" class="btn-active-icon duration-300 block w-3/12 rounded bg-gray-500 text-gray-100 flex justify-center items-center">
                         <i class="fa fa-trash text-sm"></i>
                      </span>
                   </div>

@@ -12,6 +12,7 @@
     "js-cookie": "^3.0.1",
     "postcss": "^8.3.8",
     "postcss-import": "^14.0.2",
+    "primevue": "^3.18.0",
     "tailwindcss": "^2.2.16",
     "vue": "^3.2.13",
     "vue-axios": "^3.3.7",
