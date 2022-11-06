@@ -6,9 +6,7 @@ import searchProducts from '../api/products/search.js'
 const actions = {
    
    getProfile({ commit }) {
-      //Get token
-      const TOKEN = localStorage.getItem('TOKEN')
-      
+      //Get token      
       const setFullname = res => {
          //Check the response
          if ( res.data.status === 200 ) {
@@ -20,13 +18,11 @@ const actions = {
          }
       }
       
-      profile(TOKEN, setFullname)
+      profile(setFullname)
    },
    
    getProducts({ commit }) {
       //Get token
-      const TOKEN = localStorage.getItem('TOKEN')
-      
       const setProducts = res => {
          console.log(res);
          //Check the response
@@ -34,8 +30,7 @@ const actions = {
             commit('setProducts', res.data.results)
          }
       }
-      
-      products(TOKEN, setProducts)
+      products(setProducts)
    },
    
    getProductsBy({ commit }, payload) {

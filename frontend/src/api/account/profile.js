@@ -2,7 +2,7 @@
 import BASE_URL from '../BASE_URL.js'
 import axios from 'axios'
 
-const profile = ( token, callback ) => {
+const profile = (callback ) => {
 
    axios.get(`${BASE_URL}/profile`, {
       headers: {

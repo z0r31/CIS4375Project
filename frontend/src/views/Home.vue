@@ -1,6 +1,7 @@
 <template>
-	<Menu></Menu>
-   <HeaderHome :fullname="fullname"></HeaderHome>
+	<!-- <Menu></Menu> -->
+   
+    <HeaderHome :fullname="fullname"></HeaderHome>
 	
 	<CategoryBar v-on:change-category="search()"></CategoryBar>
 	<Card :cards="products" v-on:btn-delete-product="showModalDelete = !showModalDelete" ></Card>
@@ -20,6 +21,7 @@
    import Menu from '../components/Menu.vue'
    import Card from '../components/Card.vue'
    import Modal from '../components/Modal.vue'
+    import Navbar from '../components/Navbar.vue'
    
    //Home variabel
    const store = useStore()

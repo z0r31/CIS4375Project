@@ -1,23 +1,16 @@
 <template>
-   <!-- <section id="menu" class="show-slide s-container mb-6">
-      <div @click="btnNewProduc()" class="btn-active-icon label-wrapper mb-4">
-         <i class="text-prussian-blue fa fa-plus text-2xl"></i>
-         <p class="text-xl">New product</p>
-      </div>
-      <div @click="btnManageCategory()" class="btn-active-icon label-wrapper">
-         <i class="text-prussian-blue fas fa-tasks text-2xl"></i>
-         <p class="text-xl">Manage category</p>
-      </div>
-   </section> -->
    <ul class="flex show-slide s-container mb-6 mt-20" id="menu">
       <li class="flex-1 mr-2">
-         <div @click="btnNewProduc()" class="text-center block border border-blue-500 rounded py-2 px-4  hover:bg-blue-700 text-black">New product</div>
+         <div @click="btnNewProduc()" class="text-center block border border-blue-100 rounded py-2 px-4  hover:bg-blue-200 text-black">New product</div>
       </li>
       <li class="flex-1 mr-2">
-         <div @click="btnManageCategory()" class="text-center block border border-blue-500 rounded py-2 px-4  hover:bg-blue-700 text-black">Manage category</div>
+         <div @click="btnManageCategory()" class="text-center block border border-blue-100 rounded py-2 px-4  hover:bg-blue-200 text-black">Manage category</div>
       </li>
       <li class="flex-1 mr-2">
-         <div @click="btnCustomers()" class="text-center block border border-blue-500 rounded py-2 px-4  hover:bg-blue-700 text-black">Customers</div>
+         <div @click="btnCustomers()" class="text-center block border border-blue-100 rounded py-2 px-4  hover:bg-blue-200 text-black">Customers</div>
+      </li>
+      <li class="flex-1 mr-2">
+         <div @click="btnOrders()" class="text-center block border border-blue-100 rounded py-2 px-4  hover:bg-blue-200 text-black">Order</div>
       </li>
    </ul>
    <hr />
@@ -46,6 +39,11 @@ const btnManageCategory = () => {
 const btnCustomers = () => {
    setTimeout(() => {
       router.push({ name: 'customer' })
+   }, 500)
+}
+const btnOrders = () => {
+   setTimeout(() => {
+      router.push({ name: 'orders' })
    }, 500)
 }
 

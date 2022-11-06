@@ -17,13 +17,13 @@ const mutations = {
 	setUpdateProduct (state, payload) {
 	  const body = state.updateProduct
 	  //Binding data
-	  body.id_product = payload.id_product
-	  body.name_product = payload.name_product
+	  body.ProductInventoryID = payload.ProductInventoryID
+	  body.product_name = payload.product_name
+	  body.product_description = payload.product_description
 	  body.price_product = payload.price_product
-	  body.stock_product = payload.stock_product
-	  body.category_product = payload.category_product
-	  body.image_product = payload.image_product
-	  body.stock_unit = payload.stock_unit
+	  body.quantity = payload.quantity
+	  body.category_productId = payload.category_productId
+	  body.MaterialID = payload.MaterialID
 	},
 	setCurrentCategory (state, payload) {
 	   state.currentCategory = payload

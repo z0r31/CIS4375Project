@@ -7,7 +7,7 @@ const createCustomer = (body,mode) => {
     if(mode=="edit"){
         axios.put(`${BASE_URL}/api/customer/update`, body, {
             headers: {
-                token: body.TOKEN
+             
             }
         })
             .then(res => {
@@ -19,7 +19,7 @@ const createCustomer = (body,mode) => {
     }else{
         axios.post(`${BASE_URL}/api/customer/add`, body, {
             headers: {
-                token: body.TOKEN
+               
             }
         })
             .then(res => {

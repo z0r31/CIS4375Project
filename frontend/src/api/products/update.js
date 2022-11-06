@@ -5,7 +5,7 @@ const update = (body, success) => {
    //Create Headers
    const headers = { headers: { token: body.TOKEN } }
    
-   axios.post(`${BASE_URL}/updateProduct`, body, headers)
+   axios.put(`${BASE_URL}/api/productinventory/update`, body, headers)
       .then(res => {
          success(res)
       })
