@@ -15,6 +15,8 @@ from sql import create_connection
 from sql import execute_query
 from sql import execute_read_query
 import random
+import json
+from decimal import *
 
 from datetime import date
 
@@ -453,21 +455,16 @@ def get_customerOrder():
 
 # route to add new record to CustomerOrder table
 @app.route('/api/customerorder/add', methods=['POST'])
+@cross_origin(origin='*')
 def add_customerOrder():
-    # send POST request in json format
     request_data = request.get_json()
-
-    # information to get from payload
-    new_CustomerID =                request_data['CustomerID']
-
-  
-
-    # query to add new record to table
-    add_query = "INSERT INTO CustomerOrder (CustomerID, OrderDate)" \
-    "VALUES ('{}','{}')".format(new_CustomerID, date.today())
-    execute_query(connection, add_query)
-
-    return "Order added to database"
+    print(request_data)
+    quantity =    request_data['orders']['quantity']
+    ProductInventoryID =    request_data['orders']['ProductInventoryID']
+    update_query = "UPDATE ProductInventory SET   Quantity = '{}' " \
+        "WHERE ProductInventoryID = '{}'".format( quantity, ProductInventoryID)
+    execute_query(connection, update_query)
+    return jsonify('Successfull')
 
 # route to manually update record to CustomerOrder table
 @app.route('/api/customerorder/update', methods=['PUT'])
@@ -516,16 +513,26 @@ def add_orderInvoice():
     request_data = request.get_json()
 
     # information to get from payload
-    new_InvoiceID =                request_data['InvoiceID']
-    new_CustomerOrderID =          request_data['CustomerOrderID']
-    new_ProductInventoryID =       request_data['ProductInventoryID']
+    new_CustomerOrderID =          request_data['customerOrderID']
+    new_ProductInventoryID =       request_data['orders']
     new_OrderPrice =               request_data['OrderPrice']
     new_OrderNotes =               request_data['OrderNotes']
 
 
+    cursor = connection.cursor(dictionary=True)
+
+    select_query = 'SELECT Max(InvoiceID) as LastInvoiceId FROM OrderInvoice'
+ 
+    # execute read query and save to result variable
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+    invoiceId=result[0]['LastInvoiceId']+1
+    print(invoiceId)
+
+
     # query to add new record to table
     add_query = "INSERT INTO OrderInvoice (InvoiceID, CustomerOrderID, ProductInventoryID, OrderPrice, OrderNotes)" \
-    "VALUES ('{}','{}','{}','{}','{}')".format(new_InvoiceID, new_CustomerOrderID, new_ProductInventoryID, new_OrderPrice, new_OrderNotes)
+    "VALUES ('{}','{}','{}','{}','{}')".format(invoiceId, new_CustomerOrderID, new_ProductInventoryID, new_OrderPrice, new_OrderNotes)
     execute_query(connection, add_query)
 
     return "Order line added to database"
@@ -606,13 +613,13 @@ def update_productInventory():
     request_data = request.get_json()
 
     # information to get from payload
-    new_ProductInventoryID =    request_data['ProductInventoryID']
-    new_ProductCategoryID =     request_data['ProductCategoryID']
+    new_ProductInventoryID =    request_data['id_product']
+    new_ProductCategoryID =     request_data['category_productId']
     new_MaterialID =            request_data['MaterialID']
-    new_ProductName =           request_data['ProductName']
-    new_ProductDescription =    request_data['ProductDescription']
-    new_Quantity =              request_data['Quantity']
-    new_UnitPrice =             request_data['UnitPrice']
+    new_ProductName =           request_data['product_name']
+    new_ProductDescription =    request_data['product_description']
+    new_Quantity =              request_data['quantity']
+    new_UnitPrice =             request_data['price_product']
 
 
     # query to add new record to table
@@ -818,7 +825,7 @@ def products():
     else:
         connection.reconnect()
         print("Not connected")
-    usersql = "SELECT ProductInventoryID,ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice FROM ProductInventory"
+    usersql = "SELECT ProductInventoryID,ProductInventoryID,ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice FROM ProductInventory"
     allproducts = execute_read_query(connection, usersql)
     return jsonify({'results': allproducts, 'status': 200})
 
@@ -864,5 +871,112 @@ def deleteCustomer():
     usersql = "Delete From Customer  WHERE CustomerID = '%s'" % (id)
     execute_query(connection, usersql)
     return jsonify({'status':200})
+
+
+
+
+#api for reports
+@app.route('/reports/popular_products', methods=['GET'])
+@cross_origin(origin='*')
+def popular_products():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT ProductInventory.ProductInventoryID, ProductInventory.ProductName AS 'ProductName', ProductInventory.ProductDescription AS 'ProductDescription', COUNT(*) AS 'MostPopularProduct', ProductInventory.Quantity as Quantity FROM ProductInventory JOIN OrderInvoice ON OrderInvoice.ProductInventoryID = ProductInventory.ProductInventoryID GROUP BY ProductInventory.ProductInventoryID, ProductInventory.ProductName, ProductInventory.ProductDescription, ProductInventory.Quantity ORDER BY COUNT(*) DESC; "
+    popular_products = execute_read_query(connection, usersql)
+    return jsonify({'results': popular_products, 'status': 200})
+
+
+@app.route('/reports/products_invoice', methods=['GET'])
+@cross_origin(origin='*')
+def products_invoice():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT ProductInventory.ProductInventoryID, CONCAT(CustomerFirstName,' ', CustomerLastName) AS 'CustomerName', ProductInventory.ProductName AS 'ProductName',DATE_FORMAT(Invoice.InvoiceDate,'%d-%M-%Y') AS 'InvoiceDate' FROM ProductInventory JOIN OrderInvoice ON OrderInvoice.ProductInventoryID = ProductInventory.ProductInventoryID JOIN Invoice ON Invoice.InvoiceID = OrderInvoice.InvoiceID JOIN Customer ON Customer.CustomerID = Invoice.CustomerID  ORDER BY InvoiceDate; "
+    products_invoice = execute_read_query(connection, usersql)
+    return jsonify({'results': products_invoice, 'status': 200})
+
+
+@app.route('/reports/return_products', methods=['GET'])
+@cross_origin(origin='*')
+def return_products():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT ProductInventory.ProductInventoryID, ProductInventory.ProductName AS 'ProductName', COUNT(OrderInvoice_Return.OrderInvoiceID) AS 'QuantityReturned', GROUP_CONCAT(ReturnTable.ReturnReason, ' ') AS 'ReturnReason' FROM ReturnTable JOIN OrderInvoice_Return ON OrderInvoice_Return.ReturnID = ReturnTable.ReturnID JOIN OrderInvoice ON OrderInvoice.OrderInvoiceID = OrderInvoice_Return.OrderInvoiceID JOIN ProductInventory ON ProductInventory.ProductInventoryID = OrderInvoice.ProductInventoryID GROUP BY ProductInventory.ProductInventoryID, ProductInventory.ProductName ORDER BY COUNT(OrderInvoice_Return.OrderInvoiceID) DESC;"
+    return_products = execute_read_query(connection, usersql)
+    return jsonify({'results': return_products, 'status': 200})
+
+
+@app.route('/reports/importing_days', methods=['GET'])
+@cross_origin(origin='*')
+def importing_days():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT Importing.ImportID, ProductCategory.ProductDescription AS 'Category', ProductInventory.ProductName AS 'ProductName', Importing.ReworkStatus AS 'Status', CURRENT_DATE - ImportDate AS 'DaysinImporting' FROM Importing JOIN ProductInventory ON ProductInventory.ProductInventoryID = Importing.ProductInventoryID JOIN ProductCategory ON ProductCategory.ProductCategoryID = ProductInventory.ProductCategoryID Where ReworkStatus = 1;"
+    importing_days = execute_read_query(connection, usersql)
+    return jsonify({'results': importing_days, 'status': 200})
+
+
+@app.route('/reports/weekly_return', methods=['GET'])
+@cross_origin(origin='*')
+def weekly_return():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT OrderInvoice_Return.OrderInvoice_ReturnID, ProductInventory.ProductName AS 'ProductName', ReturnTable.ReturnReason AS 'ReturnReason', ReturnTable.ReturnDate AS 'ReturnDate' FROM ReturnTable JOIN OrderInvoice_Return ON OrderInvoice_Return.ReturnID = ReturnTable.ReturnID JOIN OrderInvoice ON OrderInvoice.OrderInvoiceID = OrderInvoice_Return.OrderInvoiceID JOIN ProductInventory ON ProductInventory.ProductInventoryID = OrderInvoice.ProductInventoryID Where ReturnDate between '2022-10-30' and '2022-11-06';;"
+    weekly_return = execute_read_query(connection, usersql)
+    return jsonify({'results': weekly_return, 'status': 200})
+
+
+@app.route('/reports/product_quantity', methods=['GET'])
+@cross_origin(origin='*')
+def product_quantity():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT ProductInventory.ProductInventoryID, ProductCategory.ProductDescription AS 'Category', ProductInventory.ProductName AS 'ProductName', ProductInventory.Quantity AS 'Quantity' FROM ProductInventory JOIN ProductCategory ON ProductCategory.ProductCategoryID = ProductInventory.ProductCategoryID ORDER BY Quantity DESC;"
+    product_quantity = execute_read_query(connection, usersql)
+    return jsonify({'results': product_quantity, 'status': 200})
+
+
+@app.route('/reports/valued_customer', methods=['GET'])
+@cross_origin(origin='*')
+def valued_customer():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT Customer.CustomerID, CONCAT(CustomerFirstName,' ', CustomerLastName) AS 'CustomerName', Customer.CustomerEmail AS 'CustomerEmail', COUNT(Invoice.CustomerID) AS 'Numberofpurchases' FROM Invoice JOIN Customer on Customer.CustomerID = Invoice.CustomerID GROUP BY Customer.CustomerID, CONCAT(CustomerFirstName,' ', CustomerLastName), Customer.CustomerEmail HAVING COUNT(Invoice.CustomerID) > 1 ORDER BY COUNT(Invoice.CustomerID) DESC;"
+    valued_customer = execute_read_query(connection, usersql)
+    return jsonify({'results': valued_customer, 'status': 200})
+
+
+@app.route('/reports/best_employee', methods=['GET'])
+@cross_origin(origin='*')
+def best_employee():
+    if (connection.is_connected()):
+        print("Connected")
+    else:
+        connection.reconnect()
+        print("Not connected")
+    usersql = "SELECT Employee.EmployeeID, CONCAT(EmployeeFirstName,' ', EmployeeLastName) AS 'EmployeeName', Employee.EmployeeEmail AS 'EmployeeEmail', COUNT(Invoice.EmployeeID) AS 'NumberofSales' FROM Invoice JOIN Employee on Employee.EmployeeID = Invoice.EmployeeID GROUP BY Employee.EmployeeID, CONCAT(EmployeeFirstName,' ', EmployeeLastName), Employee.EmployeeEmail ORDER BY COUNT(Invoice.EmployeeID) DESC;"
+    best_employee = execute_read_query(connection, usersql)
+    return jsonify({'results': best_employee, 'status': 200})
 
 app.run()

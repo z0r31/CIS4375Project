@@ -9,6 +9,7 @@ import DataView from 'primevue/dataview';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
+import Menu from 'primevue/menu';
 
 
 import "primevue/resources/themes/lara-light-blue/theme.css";
@@ -26,4 +27,5 @@ app.component('DataTable', DataTable)
 app.component('DataView', DataView)
 app.component('DataViewLayoutOptions', DataViewLayoutOptions)
 app.component('Button', Button)
+app.component('Menu', Menu)
 app.mount('#app')

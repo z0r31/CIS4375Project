@@ -5,11 +5,10 @@ import axios from 'axios'
 const searchProducts = (body, callback) => {
    
    //Create headers
-   const headers = { headers: { token: body.TOKEN } }
    
    if (body.keyword === '') body.keyword = false
    //alert(`${BASE_URL}/search/${body.keyword}/${body.category_product}`)
-   axios.get(`${BASE_URL}/search/${body.category_product}`, headers)
+   axios.get(`${BASE_URL}/search/${body.category_product}`)
       .then(res => {
          //Success
          //alert(JSON.stringify(res.data))

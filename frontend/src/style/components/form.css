@@ -41,3 +41,8 @@
 .form-wrapper .btn-form button:disabled {
    opacity: .5;
 }
+
+
+.form-wrapper .btn-forms button {
+   @apply w-20 text-center duration-300 py-4 rounded-2xl font-semibold text-gray-100;
+}

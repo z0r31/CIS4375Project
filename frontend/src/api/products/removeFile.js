@@ -7,9 +7,9 @@ const removeFile = body => {
    //console.log('remove file', body, callback)
    
    const data = { data: { image_product: body.image_product } }
-   const headers = { headers: { token: body.TOKEN } } 
    
-   axios.delete(`${BASE_URL}/removeFile`, data, headers)
+   
+   axios.delete(`${BASE_URL}/removeFile`, data)
       .then(res => {
          console.log(res)
       })

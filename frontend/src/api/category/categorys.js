@@ -4,9 +4,7 @@ import axios from 'axios'
 
 const categorys = callback => {
    //Get TOKEN
-   const headers = { headers: { token: localStorage.getItem('TOKEN') } }
-   
-   axios.get(`${BASE_URL}/categorys`, headers)
+   axios.get(`${BASE_URL}/categorys`)
       .then(res => {
          //Success
          if ( res.status === 200 ) callback(true, res)

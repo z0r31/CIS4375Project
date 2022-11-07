@@ -10,7 +10,7 @@ const deleteProduct = (body, action) => {
    }
    
    //Create Headers
-   const headers = { token: body.TOKEN }
+   const headers = {  }
    
    axios.delete(`${BASE_URL}/deleteProduct`,{
       headers,
