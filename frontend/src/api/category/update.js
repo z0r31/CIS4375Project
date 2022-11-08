@@ -14,7 +14,7 @@ const updateCategory = (data, category, callback, getCategory) => {
    const headers = { headers: { token: localStorage.getItem('TOKEN') } }
    
    //Fetch
-   axios.post(`${BASE_URL}/updateCategory`, body, headers)
+   axios.post(`${BASE_URL}/updateCategory`, body)
       .then(res => {
          //Success
          if (res.data.status === 200) callback(getCategory)

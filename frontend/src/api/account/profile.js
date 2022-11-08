@@ -4,10 +4,7 @@ import axios from 'axios'
 
 const profile = (callback ) => {
 
-   axios.get(`${BASE_URL}/profile`, {
-      headers: {
-         token
-      }})
+   axios.get(`${BASE_URL}/profile`, {})
       .then(res => {
          callback(res)
       })

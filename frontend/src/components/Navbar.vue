@@ -204,7 +204,7 @@ export default {
           },
         },
         {
-          label: "Weekly Return",
+          label: "Return by Dates",
           command: () => {
             this.router.push({ name: "weeklyreturn" });
           },

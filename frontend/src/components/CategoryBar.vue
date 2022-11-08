@@ -35,7 +35,6 @@
          if ( status ) {
             categoryArr.value = res.data.results
             categoryArr.value.unshift({ ProductDescription: 'All' })
-            categoryArr.value.push({ ProductDescription: 'Uncategorys' })
          }
       }
       
@@ -53,6 +52,7 @@
    const currentCategory = ref('')
    
    const changeCategory = name => {
+      console.log(name);
       //Set to state
       store.commit('setCurrentCategory', name)
       currentCategory.value = name

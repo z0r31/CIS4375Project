@@ -820,11 +820,6 @@ def update_orderInvoiceReturn():
 @app.route('/products', methods=['GET'])
 @cross_origin(origin='*')
 def products():
-    if (connection.is_connected()):
-        print("Connected")
-    else:
-        connection.reconnect()
-        print("Not connected")
     usersql = "SELECT ProductInventoryID,ProductInventoryID,ProductCategoryID,MaterialID,ProductName,ProductDescription,Quantity,UnitPrice FROM ProductInventory"
     allproducts = execute_read_query(connection, usersql)
     return jsonify({'results': allproducts, 'status': 200})
@@ -889,7 +884,7 @@ def popular_products():
     return jsonify({'results': popular_products, 'status': 200})
 
 
-@app.route('/reports/products_invoice', methods=['GET'])
+@app.route('/reports/products_invoice', methods=['POST'])
 @cross_origin(origin='*')
 def products_invoice():
     if (connection.is_connected()):
@@ -897,7 +892,11 @@ def products_invoice():
     else:
         connection.reconnect()
         print("Not connected")
-    usersql = "SELECT ProductInventory.ProductInventoryID, CONCAT(CustomerFirstName,' ', CustomerLastName) AS 'CustomerName', ProductInventory.ProductName AS 'ProductName',DATE_FORMAT(Invoice.InvoiceDate,'%d-%M-%Y') AS 'InvoiceDate' FROM ProductInventory JOIN OrderInvoice ON OrderInvoice.ProductInventoryID = ProductInventory.ProductInventoryID JOIN Invoice ON Invoice.InvoiceID = OrderInvoice.InvoiceID JOIN Customer ON Customer.CustomerID = Invoice.CustomerID  ORDER BY InvoiceDate; "
+    request_data = request.get_json()
+    fromDate = request_data['fromDate']
+    toDate = request_data['toDate']
+    print(fromDate)
+    usersql = "SELECT ProductInventory.ProductInventoryID, CONCAT(CustomerFirstName,' ', CustomerLastName) AS 'CustomerName', ProductInventory.ProductName AS 'ProductName', Invoice.InvoiceDate AS 'InvoiceDate', concat('$', Invoice.ShippingTotal) AS 'Amount' FROM ProductInventory JOIN OrderInvoice ON OrderInvoice.ProductInventoryID = ProductInventory.ProductInventoryID JOIN Invoice ON Invoice.InvoiceID = OrderInvoice.InvoiceID JOIN Customer ON Customer.CustomerID = Invoice.CustomerID  Where InvoiceDate between '%s' and '%s'"% (fromDate,toDate); 
     products_invoice = execute_read_query(connection, usersql)
     return jsonify({'results': products_invoice, 'status': 200})
 
@@ -928,15 +927,20 @@ def importing_days():
     return jsonify({'results': importing_days, 'status': 200})
 
 
-@app.route('/reports/weekly_return', methods=['GET'])
+@app.route('/reports/weekly_return', methods=['POST'])
 @cross_origin(origin='*')
 def weekly_return():
     if (connection.is_connected()):
         print("Connected")
     else:
         connection.reconnect()
-        print("Not connected")
-    usersql = "SELECT OrderInvoice_Return.OrderInvoice_ReturnID, ProductInventory.ProductName AS 'ProductName', ReturnTable.ReturnReason AS 'ReturnReason', ReturnTable.ReturnDate AS 'ReturnDate' FROM ReturnTable JOIN OrderInvoice_Return ON OrderInvoice_Return.ReturnID = ReturnTable.ReturnID JOIN OrderInvoice ON OrderInvoice.OrderInvoiceID = OrderInvoice_Return.OrderInvoiceID JOIN ProductInventory ON ProductInventory.ProductInventoryID = OrderInvoice.ProductInventoryID Where ReturnDate between '2022-10-30' and '2022-11-06';;"
+
+    request_data = request.get_json()
+    fromDate = request_data['fromDate']
+    toDate = request_data['toDate']
+    print(fromDate)
+
+    usersql = "SELECT OrderInvoice_Return.OrderInvoice_ReturnID, ProductInventory.ProductName AS 'ProductName', ReturnTable.ReturnReason AS 'ReturnReason', ReturnTable.ReturnDate AS 'ReturnDate' FROM ReturnTable JOIN OrderInvoice_Return ON OrderInvoice_Return.ReturnID = ReturnTable.ReturnID JOIN OrderInvoice ON OrderInvoice.OrderInvoiceID = OrderInvoice_Return.OrderInvoiceID JOIN ProductInventory ON ProductInventory.ProductInventoryID = OrderInvoice.ProductInventoryID Where ReturnDate between '%s' and '%s'"% (fromDate,toDate)
     weekly_return = execute_read_query(connection, usersql)
     return jsonify({'results': weekly_return, 'status': 200})
 

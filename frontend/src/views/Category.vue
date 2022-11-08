@@ -25,7 +25,7 @@
                </button>
             </div>
          </template>
-         <p class="show-slide">*If you delete a category, then your products in that category will go into uncategorys</p>
+         <p class="show-slide"></p>
       </div>
       
       <!-- Update category -->

@@ -1,4 +1,6 @@
+
 <template>
+   
 	<!-- <Menu></Menu> -->
    
     <HeaderHome :fullname="fullname"></HeaderHome>
@@ -21,7 +23,7 @@
    import Menu from '../components/Menu.vue'
    import Card from '../components/Card.vue'
    import Modal from '../components/Modal.vue'
-    import Navbar from '../components/Navbar.vue'
+   import Navbar from '../components/Navbar.vue'
    
    //Home variabel
    const store = useStore()
@@ -36,7 +38,15 @@
    //Reload / get product if event reload-product firing
    const reloadProduct = () => {
       //Get All products from server
-      store.dispatch('getProductsBy', bodySearch.value)
+      if (bodySearch.value != undefined && bodySearch.value!='All') {
+         //Get products by search again
+         store.dispatch('getProductsBy', bodySearch.value)
+      } else {
+         //Get All products from server
+         setTimeout(() => {
+            store.dispatch('getProducts')
+         }, 1000);
+      }
    }
    
    //Get all products
@@ -46,8 +56,16 @@
    
    //changeCategory or change-keyword
    const search = () => {
-      //alert('search')
-      store.dispatch('getProductsBy', bodySearch.value)
+      if (bodySearch.value != undefined && bodySearch.value!='All') {
+         //Get products by search again
+         store.dispatch('getProductsBy', bodySearch.value)
+      } else {
+         //Get All products from server
+         setTimeout(() => {
+            store.dispatch('getProducts')
+         }, 1000);
+      }
+      //store.dispatch('getProductsBy', bodySearch.value)
    }
    
    const bodySearch = computed(() => {
@@ -55,15 +73,10 @@
    })
    
    //If user not authenticated
-   const isAuthenticated = res => {
-      
-      //code response , true if === 200
-      if ( res.status !== 200 ) {
-         router.push({ name: 'login' });
-      } else {
-         router.push({ name: 'home' })
-      }
-   }
+   // const isAuthenticated = res => {
+   //    //code response , true if === 200
+   //     router.push({ name: 'home' })
+   // }
    
    //Validation 
    onMounted(() => {
@@ -72,8 +85,7 @@
       const currentCategoryFromState = computed(() => {
          return store.getters.currentCategory
       })
-      
-      if (currentCategoryFromState.value !== 'All') {
+      if (currentCategoryFromState.value != undefined && currentCategoryFromState.value!='All') {
          //Get products by search again
          store.dispatch('getProductsBy', bodySearch.value)
       } else {
@@ -97,7 +109,7 @@
          body.TOKEN = localStorage.getItem('TOKEN')
       }
       
-      checkToken(body, isAuthenticated)
+      //checkToken(body, isAuthenticated)
    })
    
 </script>

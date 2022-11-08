@@ -12,7 +12,7 @@ const deleteCategory = (category, key, callback, getCategorys) => {
    }
    
    //Create Headers
-   const headers = { token: localStorage.getItem('TOKEN') } 
+   const headers = {  } 
    
    //Fetch
    axios.delete(`${BASE_URL}/deleteCategory`, {

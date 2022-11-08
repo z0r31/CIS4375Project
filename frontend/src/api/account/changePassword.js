@@ -8,7 +8,7 @@ const changePassword = (newPassword, callback) => {
    //Create headers
    const headers = { headers: { token: localStorage.getItem('TOKEN') } }
    //Fetch
-   axios.post(`${BASE_URL}/changePassword`, body, headers)
+   axios.post(`${BASE_URL}/changePassword`, body)
       .then(res => {
          //Success
          if (res.data.status === 200) callback(true)

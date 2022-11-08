@@ -4,9 +4,7 @@ import axios from 'axios'
 
 const products = (callback) => {
    // Send Token in headers
-   axios.get(`${BASE_URL}/products`, {
-      headers: {  
-      }}).then(res => {
+   axios.get(`${BASE_URL}/products`,).then(res => {
          console.log(res)
          callback(res)
       })

@@ -104,7 +104,6 @@ let mode='add';
 const getCountry = (status, res) => {
     if (status) {
         countryArr.value = res.data
-        // categoryArr.value.push({ category: 'uncategorys' })
     }
 }
 

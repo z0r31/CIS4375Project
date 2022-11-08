@@ -2,8 +2,8 @@
 import BASE_URL from '../BASE_URL.js'
 import axios from 'axios'
 
-const productinvoice = callback => {
-   axios.get(`${BASE_URL}/reports/products_invoice`)
+const productinvoice = (body,callback) => {
+   axios.post(`${BASE_URL}/reports/products_invoice`,body)
       .then(res => {
         callback(res)
       })

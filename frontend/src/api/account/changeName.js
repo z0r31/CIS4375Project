@@ -8,7 +8,7 @@ const changeName = (newName, callback) => {
    //Create headers
    const headers = { headers: { token: localStorage.getItem('TOKEN') } }
    //Fetch
-   axios.post(`${BASE_URL}/changeName`, body, headers)
+   axios.post(`${BASE_URL}/changeName`, body)
       .then(res => {
          //Success
          if (res.data.status === 200) callback(true)
